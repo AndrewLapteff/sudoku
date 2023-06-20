@@ -1,0 +1,52 @@
+body{ 
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  flex-direction: column;
+}
+
+.wrapper {
+  display: grid;
+  grid-template-columns: repeat(9, 40px); /* wrap після кожного 9-го елемента */
+  width: fit-content;
+  border: 1.3px solid white
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  /* border: 1px solid white; */
+}
+
+.cell input {
+  width: 20px;
+  height: 25px;
+  border: 0px;
+  background-color: transparent;
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+.solve-btn {
+  margin-top: 25px;
+  font-size: 1.3rem;
+  background-color: #393646;
+  border: 1px solid rgb(128, 128, 128);
+  cursor: pointer;
+}
+.solve-btn:active {
+  margin-top: 25px;
+  font-size: 1.3rem;
+  background-color: #394867;
+  border: 1px solid rgb(128, 128, 128);
+  cursor: pointer;
+}

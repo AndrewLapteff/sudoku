@@ -1,0 +1,1 @@
+export type TMatrix = Array<Array<number>>
