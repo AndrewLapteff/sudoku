@@ -19,10 +19,10 @@ This project is a Sudoku game built using React. Sudoku is a popular logic-based
 
 To run this Sudoku game locally, follow these steps:
 
-1. Clone this repository: `git clone https://github.com/your-username/sudoku-game.git`
+1. Clone this repository: `git clone https://github.com/AndrewLapteff/sudoku.git`
 2. Navigate to the project directory: `cd sudoku-game`
 3. Install the dependencies: `npm install`
-4. Start the development server: `npm start`
+4. Start the development server: `npm run dev`
 5. Open your browser and visit `http://localhost:5173` to play the Sudoku game.
 
 ## Usage
