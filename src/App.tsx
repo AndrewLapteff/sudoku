@@ -6,10 +6,10 @@ import './App.css'
 const initialArray = new Array(9).fill(null).map(() => new Array(9).fill(0))
 
 function App() {
-  const [numbers, setNumbers] = useState<TMatrix>(initialArray)
+  const [puzzle, setPuzzle] = useState<TMatrix>(initialArray)
   const [isStarted, setStarted] = useState(false)
   const [errorsCount, setErrorsCount] = useState(0)
-  const [result, setResult] = useState<TMatrix>(initialArray)
+  const [solvedPuzzle, setSolvedPuzzle] = useState<TMatrix>(initialArray)
   const [emptyCells, setEmptyCells] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -18,12 +18,11 @@ function App() {
     if (emptyCells < 1 || emptyCells > 81) return
     const sudoku = new Sudoku(9, emptyCells)
     sudoku.fillValues() // створення початкових значеннь
-    const sudokuMap = sudoku.mat // початкова матриця
-    const result = structuredClone(sudokuMap)
-    solveSudoku(result, 0, 0) // метод котрмй мутує массив та вирішує судоку
-    setResult(result)
-    setNumbers(sudokuMap)
+    const newPuzzle = sudoku.mat // початкова матриця
+    setPuzzle(newPuzzle)
     setStarted(true)
+    solve(newPuzzle)
+    savingProgressHandler(newPuzzle)
   }
 
   const decorationCheck = (colIdx: number, rowIdx: number) => {
@@ -45,6 +44,25 @@ function App() {
     )
   }
 
+  const fillCell = (rowIdx: number, colIdx: number, value: number): void => {
+    if (value > 9) value = value / 10
+    // перевірка на корректність відповіді
+    if (value == solvedPuzzle[rowIdx][colIdx]) {
+      const newGrid = [...puzzle]
+      newGrid[rowIdx][colIdx] = value
+      setPuzzle(newGrid)
+      savingProgressHandler(newGrid)
+    } else {
+      setErrorsCount((prev) => prev + 1)
+    }
+  }
+
+  const solve = (puzzle: TMatrix) => {
+    const puzzleClone = structuredClone(puzzle)
+    solveSudoku(puzzleClone, 0, 0) // метод котрмй мутує массив та вирішує судоку
+    setSolvedPuzzle(puzzleClone)
+  }
+
   const savingProgressHandler = (newGrid: TMatrix) => {
     let progress = ''
     newGrid.forEach((numbersArray) => {
@@ -54,31 +72,50 @@ function App() {
     localStorage.setItem('progress', progress)
   }
 
-  const fillCell = (rowIdx: number, colIdx: number, value: number): void => {
-    if (value > 9) value = value / 10
-    // перевірка на корректність відповіді
-    if (value == result[rowIdx][colIdx]) {
-      const newGrid = [...numbers]
-      newGrid[rowIdx][colIdx] = value
-      setNumbers(newGrid)
-      savingProgressHandler(newGrid)
-    } else {
-      setErrorsCount((prev) => prev + 1)
-    }
-  }
-
   const solveHandler = () => {
-    setNumbers(result)
+    const puzzleClone = structuredClone(puzzle)
+    solveSudoku(puzzleClone, 0, 0) // метод котрмй мутує массив та вирішує судоку
+    setSolvedPuzzle(puzzleClone)
+    setPuzzle(puzzleClone)
+    localStorage.removeItem('progress')
   }
 
   useEffect(() => {
     inputRef.current?.focus()
   }, [])
 
+  const cameBackToGame = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault()
+    if (localStorage.getItem('progress')) {
+      const progress = localStorage.getItem('progress')
+      const savedPuzzle: TMatrix = initialArray
+      const puzzleOrder = progress?.split(',')
+      if (puzzleOrder == undefined) return false
+      let index = 0
+      for (let row = 0; row < 9; row++) {
+        for (let col = 0; col < 9; col++) {
+          savedPuzzle[row][col] = +puzzleOrder[index]
+          index++
+        }
+      }
+      setPuzzle(savedPuzzle)
+      setStarted(true)
+      solve(savedPuzzle)
+    }
+  }
+
+  const openMenu = () => {
+    setStarted(false)
+    setEmptyCells(0)
+    setErrorsCount(0)
+  }
+
   if (!isStarted) {
     return (
       <>
-        <h3>Кількість пустих клітинок</h3>
+        <h3>Count of emply cells</h3>
         <form>
           <input
             className="cells-count-input"
@@ -87,12 +124,15 @@ function App() {
             onChange={(e) => setEmptyCells(parseInt(e.target.value) || 0)}
             type="text"
           />
+          <button type="submit" className="btn" onClick={(e) => startup(e)}>
+            New game
+          </button>
           <button
             type="submit"
-            className="solve-btn"
-            onClick={(e) => startup(e)}
+            className="btn"
+            onClick={(e) => cameBackToGame(e)}
           >
-            Грати
+            Restore progress
           </button>
         </form>
       </>
@@ -102,7 +142,7 @@ function App() {
       <>
         <h2>{errorsCount}</h2>
         <div className="wrapper">
-          {numbers.map((rowItem, rowIndex) => {
+          {puzzle.map((rowItem, rowIndex) => {
             return (
               <div key={rowIndex}>
                 {rowItem.map((colItem: number, colIndex: number) => {
@@ -131,9 +171,14 @@ function App() {
             )
           })}
         </div>
-        <button onClick={solveHandler} className="solve-btn">
-          Solve
-        </button>
+        <div className="actions">
+          <button onClick={solveHandler} className="btn">
+            Solve
+          </button>
+          <button onClick={openMenu} className="btn">
+            Menu
+          </button>
+        </div>
       </>
     )
   }

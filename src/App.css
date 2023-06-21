@@ -36,18 +36,21 @@ body{
   font-size: 1.2rem;
 }
 
-.solve-btn {
+.btn {
   margin-top: 25px;
   font-size: 1.3rem;
   background-color: #393646;
   border: 1px solid rgb(128, 128, 128);
   cursor: pointer;
+  border-radius: 10px;
+  margin: 25px 5px 0 5px;
 }
-.solve-btn:active {
+.btn:hover {
   margin-top: 25px;
   font-size: 1.3rem;
   background-color: #394867;
   border: 1px solid rgb(128, 128, 128);
+  border-radius: 10px;
   cursor: pointer;
 }
 .cells-count-input{
@@ -60,4 +63,6 @@ body{
 form {
   display: flex;
   flex-direction: column;
+}
+.actions {
 }
