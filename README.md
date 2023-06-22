@@ -1,5 +1,7 @@
 # Sudoku Game
 
+<b>Demo</b>: https://sudoku-2023.netlify.app/
+
 This project is a Sudoku game built using React. Sudoku is a popular logic-based puzzle game that involves filling a 9x9 grid with digits so that each column, each row, and each of the nine 3x3 sub-grids contains all of the digits from 1 to 9.
 
 ## Features
